@@ -36,14 +36,15 @@ declare -A instance1=(
 
 declare -n instance
 for instance in ${!instance@}; do
-	SECURITY_GROUP=$(aws ec2 describe-security-groups --filter "Name=group-name,Values=${instance[securityGroup]}" --query "SecurityGroups[*].GroupId" --output text)
-    SUBNET_ID=$(aws ec2 describe-subnets --filters "Name=availability-zone,Values=${instance[availabilityZone]}" --query "Subnets[*].SubnetId" --output text)
-    TAG="ResourceType=instance,Tags=[{Key=Name,Value=${instance[instanceName]}}]"
-	aws ec2 run-instances\
+	SECURITy__GROUP=$(aws ec2 describe-security-groups --filter "Name=group-name,Values=${instance[securityGroup]}" --query "SecurityGroups[*].GroupId" --output text)
+	SUBNET_ID=$(aws ec2 describe-subnets --filters "Name=availability-zone,Values=${instance[availabilityZone]}" --query "Subnets[*].SubnetId" --output text)
+	TAG="ResourceType=instance,Tags=[{Key=Name,Value=${instance[instanceName]}}]"
+	
+	aws ec2 run-instances \
 	--image-id ${instance[ami]} \
 	--count ${COUNT} \
 	--instance-type ${instance[instanceType]} \
-	--key-name ${instance[key-name]} \
+	--key-name ${instance[keyName]} \
 	--security-group-ids ${SECURITY_GROUP} \
 	--subnet-id ${SUBNET_ID} \
 	--tag-specifications ${TAG} > /dev/null
